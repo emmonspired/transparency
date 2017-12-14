@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ title }}">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" 
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" 
+      integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" 
+      crossorigin="anonymous">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
+  </head>
+  <body itemscope itemtype="http://schema.org/WebPage">
+    
+    <style>
+      body { 
+        background: #000;
+        color: #fff;
+      }
+      a,a:hover { color: inherit; }
+      .card { 
+        background-color: inherit;
+        border-top: 1px solid #4f4f4f; 
+        border-bottom: 1px solid #4f4f4f; 
+      }
+      .summary li { margin: 10px 0; }
+      .summary .title, 
+      .summary .value { font-size: 1.3em; font-weight: bold; }
+      .holders .title,
+      .holders .value { font-size: 1em; }
+      .holders .title { text-transform: lowercase; font-size: 80%; color: lightgrey; }
+      .header-icon {
+        display: inline-block;
+        vertical-align: text-top;
+        margin-right: 15px;
+        width: 52px;
+        height: 52px;
+        background-position: 0 0;
+        background-image: url(https://decentraland.org/images/icons-dd0be5997a.svg);
+      }
+      .text-help { color: lightgrey; }
+      .footer { font-size: 0.85em; }
+      .footer-foundation { text-align: left; }
+      .footer-center { text-align: center; color: #4f4f4f; } 
+      .footer-icons { text-align: right; }
+      .footer-icons a { margin-left: 12px; color: inherit; }
+      .footer-icons a:hover { text-decoration: none; }
+      .footer-links a { margin-left: 15px; }
+    </style>
+
+    {% macro printStat(stat, printUnit=false) %}
+    <li class="stat clearfix">
+      <div class="float-left">
+        <div class="title">
+          {% if stat.name %}{{ stat.name }}{% elif stat.addr %}<a href="https://etherscan.io/address/{{ stat.addr }}">{{ stat.addr }}</a>{% endif %}
+        </div>
+        {% if stat.help %}<div class="small text-help">{{ stat.help }}</div>{% endif %}
+      </div>
+      <div class="float-right">
+        <div class="value">
+          {{ stat.manaHolding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}&nbsp;
+          {% if printUnit %}{{ tokenUnit }}{% endif %}
+        </div>
+      </div>
+    </li>
+    {% endmacro %}    
+
+    <div class="container">
+
+      <div class="header mt-3 pb-3">
+        <h1><span class="header-icon"></span> {{ title }} Supply</h1>
+      </div>
+
+      <div class="card">
+        <div class="card-body">
+          
+          <div class="summary">
+            <ul class="list-unstyled">
+              {{ printStat(contracts.token) }}
+
+              {{ printStat(contracts.terraform) }}
+              {{ printStat(contracts.vesting) }}
+              {{ printStat(contracts.wallets) }}
+
+              {% set total = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding %}
+              {{ printStat({ 'name': 'Total MANA in Circulation', 'manaHolding': total, 'help': 'Including Decentraland\'s wallet' }) }}
+
+              {% set total = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding - contracts.wallets.manaHolding %}
+              {{ printStat({ 'name': 'Circulating Supply of MANA', 'manaHolding': total, 'help': 'Excluding Decentraland\'s wallet' }) }}
+            </ul>
+          </div>
+
+          <hr/>
+
+          <div class="holders">
+            <h4>Largest MANA Holders</h4>
+
+            <ul class="list-unstyled mb-4">
+              {% for x in manaHolders %}
+                {{ printStat({ addr: x[0], manaHolding: x[1] }, true) }}
+              {% endfor %}
+            </ul>
+
+            <h4>Largest Terraform Participants</h4>
+
+            <ul class="list-unstyled mb-4">
+              {% for x in terraformHolders %}
+                {{ printStat({ addr: x[0], manaHolding: x[1] }, true) }}
+              {% endfor %}
+            </ul>
+
+            <h4>Largest MANA Vesting Contracts</h4>
+
+            <ul class="list-unstyled mb-4">
+              {% for x in vestingHolders %}
+                {{ printStat({ addr: x[0], manaHolding: x[1] }, true) }}
+              {% endfor %}
+            </ul>
+          </div>
+        </div>  
+      </div>
+
+      <div class="footer row pt-4 mb-2">
+        <div class="col-sm footer-foundation">Decentraland Foundation</div>
+        <div class="col-sm footer-center">
+          <div class="footer-links mb-2">
+            <a href="#">Blog</a>
+            <a href="#">FAQs</a>
+            <a href="#">Contribution Period</a>
+            <a href="#">Get in touch</a>
+          </div>
+          <div class="footer-copyright small">Copyright 2017 Decentraland. All rights reserved.</div>
+        </div>
+        <div class="col-sm footer-icons">
+          <a href="#">
+            <i class="fab fa-twitter"></i>
+          </a>
+          <a href="#">
+            <i class="fab fa-github"></i>
+          </a>
+          <a href="#">
+            <i class="fab fa-rocketchat"></i>
+          </a>
+          <a href="#">
+            <i class="fab fa-reddit"></i>
+          </a>
+          <a href="#">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="#">
+            <i class="far fa-comment"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

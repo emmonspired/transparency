@@ -1,0 +1,19 @@
+{
+  "name": "tkdash",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "aws-sdk": "^2.164.0",
+    "html-minifier": "^3.5.7",
+    "js-yaml": "^3.10.0",
+    "nunjucks": "^3.0.1",
+    "truffle-hdwallet-provider": "0.0.3",
+    "web3": "^1.0.0-beta.26"
+  }
+}

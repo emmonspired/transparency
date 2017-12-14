@@ -1,0 +1,50 @@
+#
+title: 'Decentraland'
+tokenUnit: 'MANA'
+contracts: 
+  token: { name: 'Total MANA Emitted', address: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942' }
+  wallets: { name: 'MANA in Decentraland Wallets', address: '0xe5d0c3fea1e5f01ca4098e9580b93b3b5d0ea768' }
+  terraform: { name: 'MANA Locked-in for Terraform', address: '0xcca95e580bbbd04851ebfb85f77fd46c9b91f11c' }
+  vesting: { 
+    name: 'MANA Locked-in on Vesting Contracts', 
+    address: [
+      '0x977804cf00a31e4af48ddff1afc4d06a805f73c6',
+      '0x07e2742e25bd2608e8f6ddcf981c779765b4a3fc', 
+      '0x3556407223f3e06b70fcebc6cbd554761c790fda',
+      '0x4be66bbd0da5c247f9b1d4e493a2405ef9951045',
+      '0x4decf476893cd636aa9abb5f864fac22c6af3ab2',
+      '0x3d9916144d70fdd753296442578f5451e2f64d27',
+      '0x5755f9453c6529a1aa620b31e23d6ed0870f88da',
+      '0x52e1120f788dd3c82851a045ac469d9fa7941416',
+      '0xd5662dfdf9d347de071c01685e0b031a5e8b2139',
+      '0x0fe6ee18e04b61f0bbc2bdb2705be61340dfd47d',
+      '0xbda1dc58dbbfd8aebadec95d48ee652723a82c72',
+      '0x6dbaae75ccaf4b5854ec0228083bdde52d3d9165',
+      '0xd290ea46b8507c081bf71713b2476f2ae0599004',
+      '0xd56673969e5b199ad4308a74c9ff29ebfb86a356',
+      '0x8356bc739a5b837c3ab884c2b35b4868d6b2bf1a',
+      '0x66e2e329a6c0975e79a66fd515f3e8e457ee894e',
+      '0x052c73a391242522351e5fcefc46ef46224aa134',
+      '0xdf2a54b186adaac82b59dab64080faee96d36861',
+      '0x0c33bf640f0a2af9e38bb85a58267f0c46ff8d40',
+      '0x9f92bd289a091b0ca3feec79beaa3e37fd73ba87',
+      '0x92a02a9dee8e404dd64ccd64d4d3476b54b00f3d',
+      '0xa58391574492cf378a59062b499e88dd22e7b457',
+      '0x5e2b5697cde32fbf6528d7ba77390e6605f21b14',
+      '0xc01b5218414781a9214428fc49edb051f7bed280',
+      '0x54164fae41dc85b63d4129eac3b502ec208124de',
+      '0x56324abbcca194976dea34027b49b75a6cfa64da',
+      '0x32ec79733c93f8ea9b39f00702d051237d6570a3',
+      '0x4b364ac007b4f3e6d8f1aa4fded39c8bed2be5f4',
+      '0xe3a3d8e84c1e78426c6dbfaf22991bdd87cd6e69',
+      '0x0fe07ba568eb521e1992a53d830286fcb2de4832',
+      '0xdb0e75eadf80fae5e3e5d1026278ac46f100e97c',
+      '0xb98b13bcb8bccfc38e493b4ba9e66c1c6d55b947',
+      '0x0570318951cfb0e0c4c2af3070c1c040e0e8790b' 
+    ]
+  }
+
+s3:
+  accessKey: ''
+  secretAccessKey: ''
+  bucketName: 'transparency.decentraland.online'
