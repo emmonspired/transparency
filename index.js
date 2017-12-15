@@ -74,6 +74,7 @@ function uploadS3 (filename, data) {
   console.log('\nUploading to S3...')
 
   AWS.config.update({
+    region: 'us-east-1',
     accessKeyId: config.s3.accessKey,
     secretAccessKey: config.s3.secretAccessKey
   })
@@ -91,6 +92,60 @@ function uploadS3 (filename, data) {
     }
     console.log('Done.')
   })
+}
+
+async function eventCrawler(args) {
+  
+  let obj = { 
+    maxBlock: 0, addressMap: {}
+  }
+  
+  try {
+    obj = require('./data/' + args.filename)
+  
+  } catch (err) {
+    console.warn(args.filename, 'not found')
+  }
+
+  let events = await args.contractInstance.getPastEvents(args.eventName, { 
+    fromBlock: obj.maxBlock, 
+    toBlock: 'latest' 
+  })
+  
+  let eventCount = 0
+  
+  for (let event of events) { 
+    process.stdout.write(`Processing ${args.eventName} - ${++eventCount}/${events.length}`)
+    process.stdout.write('\u001b[0K\r')
+
+    const { removed, blockNumber, transactionHash, returnValues } = event
+    
+    if (removed) continue
+
+    for (let peer of args.eventValues) {            
+      if (returnValues[peer] && !(returnValues[peer] in obj.addressMap)) {
+        
+        let mana = await args.contractInstance.methods[args.methodCall](returnValues[peer]).call()
+        let balance = web3.utils.fromWei(mana, 'ether')
+
+        obj.addressMap[ returnValues[peer] ] = parseFloat(balance)
+      }
+    }
+
+    if (blockNumber > obj.maxBlock) {
+      obj.maxBlock = blockNumber
+    }
+  }
+  
+  //
+  fs.writeFile('./data/' + args.filename, JSON.stringify(obj), 'utf8', function(err) {
+    if (err) 
+      throw err;
+    
+    console.log('\r\n', args.filename, 'saved');
+  })
+
+  return obj
 }
 
 async function run() {
@@ -125,58 +180,12 @@ async function run() {
 
   }
 
-  // Balance of Token Holders
-  let obj = { 
-    maxBlock: 0, addressMap: {}
-  }
-  
-  try {
-    obj = require('./data/transfers.json')
-  
-  } catch (err) {
-    console.warn('transfers.json not found')
-  }
-  
-  let events = await tokenContract.instance.getPastEvents('Transfer', { 
-    fromBlock: obj.maxBlock, 
-    toBlock: 'latest' 
-  })
-  
-  let eventCount = 0
-
-  for (let event of events) { 
-    process.stdout.write(`Processing event ${eventCount++}/${events.length}`)
-    process.stdout.write('\u001b[0K\r')
-
-    const { removed, blockNumber, transactionHash, returnValues } = event
-
-    if (removed) continue
-    
-    for (let peer of ['from', 'to']) {            
-      if (!(returnValues[peer] in obj.addressMap)) {
-        let mana = await tokenContract.instance.methods.balanceOf(returnValues[peer]).call()
-        let balance = web3.utils.fromWei(mana, 'ether')
-
-        obj.addressMap[ returnValues[peer] ] = parseFloat(balance)
-      }
-    }
-
-    if (blockNumber > obj.maxBlock) {
-      obj.maxBlock = blockNumber
-    }
-  }
-
-  //
-  fs.writeFile('./data/transfers.json', JSON.stringify(obj), 'utf8', function(err) {
-    if (err) 
-      throw err;
-    
-    console.log('\n\rtoken transfers saved');
-  })
-
   // Vesting Participants
-  let vestingHolders = {}
 
+  console.log('Processing vesting addresses...')
+  
+  let vestingHolders = {}
+  
   for (let addr of config.contracts.vesting.address) {
     let mana = await tokenContract.instance.methods.balanceOf(addr).call()
     let balance = web3.utils.fromWei(mana, 'ether')
@@ -184,42 +193,61 @@ async function run() {
     vestingHolders[addr] = parseFloat(balance)
   }
 
-  // Terraform Participants. 
-  let terraformHolders = {}
+  // Transfers and Terraform. 
 
-  for (let addr in obj.addressMap) {
-    let mana = await terraformContract.instance.methods.lockedBalance(addr).call()
-    let balance = web3.utils.fromWei(mana, 'ether')
+  console.log('Processing transfers and terraform addresses...')
 
-    terraformHolders[addr] = parseFloat(balance) 
-  }
-  
-  // Render file. 
-  const html = nunjucks.render('views/dashboard.njk', { 
-    title: config.title,
-    tokenUnit: config.tokenUnit,
-    contracts: config.contracts,
-    manaHolders: sortDictionary(obj.addressMap).slice(0, 5),
-    vestingHolders: sortDictionary(vestingHolders).slice(0, 5),
-    terraformHolders: sortDictionary(terraformHolders).slice(0, 5)
+  Promise.all([
+    eventCrawler({ 
+      contractInstance: tokenContract.instance,
+      eventName: 'Transfer',
+      eventValues: ['from', 'to'],
+      methodCall: 'balanceOf',
+      filename: 'manaTransfers.json'
+    }),
+    eventCrawler({
+      contractInstance: terraformContract.instance,
+      eventName: 'LockedBalance',
+      eventValues: ['user'],
+      methodCall: 'lockedBalance',
+      filename: 'terraformLocked.json'
+    })      
+  ]).then((results) => {
+    
+    // console.log(results)
+
+    let manaHolders = results[0]
+    let terraformHolders = results[1]
+
+    // Render file. 
+
+    const html = nunjucks.render('views/dashboard.njk', { 
+      title: config.title,
+      tokenUnit: config.tokenUnit,
+      contracts: config.contracts,
+      vestingHolders: sortDictionary(vestingHolders).slice(0, 5),
+      manaHolders: sortDictionary(manaHolders.addressMap).slice(0, 5),
+      terraformHolders: sortDictionary(terraformHolders.addressMap).slice(0, 5)
+    })
+
+    const minifiedHtml = minify(html, { 
+      removeComments: true,
+      collapseWhitespace: true,
+      collapseBooleanAttributes: true,
+      removeAttributeQuotes: true,
+      removeEmptyAttributes: true,
+      minifyJS: true,
+      minifyCSS: true
+    })
+
+    fs.writeFile('dashboard.html', minifiedHtml, 'utf8', function(err) {
+      if (err) 
+        throw err;
+    })
+
+    uploadS3('index.html', minifiedHtml)
   })
 
-  const minifiedHtml = minify(html, { 
-    removeComments: true,
-    collapseWhitespace: true,
-    collapseBooleanAttributes: true,
-    removeAttributeQuotes: true,
-    removeEmptyAttributes: true,
-    minifyJS: true,
-    minifyCSS: true
-  })
-
-  fs.writeFile('dashboard.html', minifiedHtml, 'utf8', function(err) {
-    if (err) 
-      throw err;
-  })
-
-  uploadS3('index.html', minifiedHtml)
 }
 
 Promise.all([ 

@@ -89,6 +89,11 @@
               {% set total = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding - contracts.wallets.manaHolding %}
               {{ printStat({ 'name': 'Circulating Supply of MANA', 'manaHolding': total, 'help': 'Excluding Decentraland\'s wallet' }) }}
             </ul>
+
+            <div class="text-center" style="width:50%">
+              <canvas id="chart"></canvas>
+            </div>
+
           </div>
 
           <hr/>
@@ -155,4 +160,46 @@
       </div>
     </div>
   </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
+  <script>
+    colors = {
+      red: 'rgb(255, 99, 132)', 
+      blue: 'rgb(54, 162, 235)', 
+      green: 'rgb(75, 192, 192)', 
+      grey: 'rgb(201, 203, 207)', 
+      orange: 'rgb(255, 159, 64)', 
+      yellow: 'rgb(255, 205, 86)',
+      purple: 'rgb(153, 102, 255)'
+    }
+    data = {
+      datasets: [{
+        backgroundColor: [
+          colors.red, colors.orange, colors.yellow, colors.green,
+        ],
+        data: [
+          {{ contracts.token.manaHolding }}, 
+          {{ contracts.terraform.manaHolding }}, 
+          {{ contracts.vesting.manaHolding }}, 
+          {{ contracts.wallets.manaHolding }}
+        ]
+      }],
+      labels: [
+        '{{ contracts.token.name }}',
+        '{{ contracts.terraform.name }}',
+        '{{ contracts.vesting.name }}',
+        '{{ contracts.wallets.name }}'
+      ]
+    };
+    var ctx = document.getElementById("chart").getContext('2d');
+    var myPieChart = new Chart(ctx, {
+      type: 'pie',
+      data: data,
+      options: {
+        responsive: true, 
+        legend: {
+          position: 'left'
+        }
+      }
+    });
+  </script>
 </html>
