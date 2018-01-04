@@ -2,7 +2,7 @@
 title: 'Decentraland'
 tokenUnit: 'MANA'
 contracts: 
-  token: { name: 'Total MANA Emitted', address: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942' }
+  token: { name: 'Total MANA Supply', address: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942' }
   wallets: { name: 'MANA in Decentraland Wallets', address: '0xe5d0c3fea1e5f01ca4098e9580b93b3b5d0ea768' }
   terraform: { name: 'MANA Locked-in for Terraform', address: '0xcca95e580bbbd04851ebfb85f77fd46c9b91f11c' }
   vesting: { 
@@ -45,6 +45,6 @@ contracts:
   }
 
 s3:
-  accessKey: ''
-  secretAccessKey: ''
+  accessKey: 'AKIAJ7LHDVKP23DA6YVQ'
+  secretAccessKey: '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'
   bucketName: 'transparency.decentraland.online'
