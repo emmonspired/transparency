@@ -59,7 +59,7 @@
       </div>
       <div class="float-right">
         <div class="value">
-          {{ stat.manaHolding.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}&nbsp;
+          {{ stat.manaHolding.toLocaleString(undefined, { maximumFractionDigits: 0 }) }}&nbsp;
           {% if printUnit %}{{ tokenUnit }}{% endif %}
         </div>
       </div>
@@ -84,10 +84,10 @@
               {{ printStat(contracts.wallets) }}
 
               {% set total = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding %}
-              {{ printStat({ 'name': 'Total MANA in Circulation', 'manaHolding': total, 'help': 'Including Decentraland\'s wallet' }) }}
+              {{ printStat({ 'name': 'Circulating Supply', 'manaHolding': total, 'help': 'Including Decentraland\'s wallet' }) }}
 
               {% set total = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding - contracts.wallets.manaHolding %}
-              {{ printStat({ 'name': 'Circulating Supply of MANA', 'manaHolding': total, 'help': 'Excluding Decentraland\'s wallet' }) }}
+              {{ printStat({ 'name': 'Circulating Supply', 'manaHolding': total, 'help': 'Excluding Decentraland\'s wallet' }) }}
             </ul>
 
             <div class="text-center" style="width:50%">
@@ -177,14 +177,12 @@
           colors.red, colors.orange, colors.yellow, colors.green,
         ],
         data: [
-          {{ contracts.token.manaHolding }}, 
           {{ contracts.terraform.manaHolding }}, 
           {{ contracts.vesting.manaHolding }}, 
           {{ contracts.wallets.manaHolding }}
         ]
       }],
       labels: [
-        '{{ contracts.token.name }}',
         '{{ contracts.terraform.name }}',
         '{{ contracts.vesting.name }}',
         '{{ contracts.wallets.name }}'
