@@ -5,27 +5,27 @@
     <meta name="description" content="{{ title }}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" 
-      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" 
-      integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" 
+    <link rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css"
+      integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb"
       crossorigin="anonymous">
     <script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
   </head>
   <body itemscope itemtype="http://schema.org/WebPage">
-    
+
     <style>
-      body { 
+      body {
         background: #000;
         color: #fff;
       }
       a,a:hover { color: inherit; }
-      .card { 
+      .card {
         background-color: inherit;
-        border-top: 1px solid #4f4f4f; 
-        border-bottom: 1px solid #4f4f4f; 
+        border-top: 1px solid #4f4f4f;
+        border-bottom: 1px solid #4f4f4f;
       }
       .summary li { margin: 10px 0; }
-      .summary .title, 
+      .summary .title,
       .summary .value { font-size: 1.3em; font-weight: bold; }
       .holders .title,
       .holders .value { font-size: 1em; }
@@ -42,7 +42,7 @@
       .text-help { color: lightgrey; }
       .footer { font-size: 0.85em; }
       .footer-foundation { text-align: left; }
-      .footer-center { text-align: center; color: #4f4f4f; } 
+      .footer-center { text-align: center; color: #4f4f4f; }
       .footer-icons { text-align: right; }
       .footer-icons a { margin-left: 12px; color: inherit; }
       .footer-icons a:hover { text-decoration: none; }
@@ -64,7 +64,7 @@
         </div>
       </div>
     </li>
-    {% endmacro %}    
+    {% endmacro %}
 
     <div class="container">
 
@@ -74,7 +74,7 @@
 
       <div class="card">
         <div class="card-body">
-          
+
           <div class="summary">
             <ul class="list-unstyled">
               {{ printStat(contracts.token) }}
@@ -123,7 +123,7 @@
               {% endfor %}
             </ul>
           </div>
-        </div>  
+        </div>
       </div>
 
       <div class="footer row pt-4 mb-2">
@@ -163,11 +163,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.bundle.min.js"></script>
   <script>
     colors = {
-      red: 'rgb(255, 99, 132)', 
-      blue: 'rgb(54, 162, 235)', 
-      green: 'rgb(75, 192, 192)', 
-      grey: 'rgb(201, 203, 207)', 
-      orange: 'rgb(255, 159, 64)', 
+      red: 'rgb(255, 99, 132)',
+      blue: 'rgb(54, 162, 235)',
+      green: 'rgb(75, 192, 192)',
+      grey: 'rgb(201, 203, 207)',
+      orange: 'rgb(255, 159, 64)',
       yellow: 'rgb(255, 205, 86)',
       purple: 'rgb(153, 102, 255)'
     }
@@ -177,14 +177,14 @@
           colors.red, colors.orange, colors.yellow, colors.green,
         ],
         data: [
-          {{ contracts.token.manaHolding }}, 
-          {{ contracts.terraform.manaHolding }}, 
-          {{ contracts.vesting.manaHolding }}, 
+          {{ total }},
+          {{ contracts.terraform.manaHolding }},
+          {{ contracts.vesting.manaHolding }},
           {{ contracts.wallets.manaHolding }}
         ]
       }],
       labels: [
-        '{{ contracts.token.name }}',
+        'Public supply of MANA',
         '{{ contracts.terraform.name }}',
         '{{ contracts.vesting.name }}',
         '{{ contracts.wallets.name }}'
@@ -195,7 +195,7 @@
       type: 'pie',
       data: data,
       options: {
-        responsive: true, 
+        responsive: true,
         legend: {
           position: 'left'
         }
