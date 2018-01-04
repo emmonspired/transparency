@@ -1,15 +1,30 @@
 #
 title: 'Decentraland'
 tokenUnit: 'MANA'
-contracts: 
+contracts:
   token: { name: 'Total MANA Emitted', address: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942' }
   wallets: { name: 'MANA in Decentraland Wallets', address: '0xe5d0c3fea1e5f01ca4098e9580b93b3b5d0ea768' }
   terraform: { name: 'MANA Locked-in for Terraform', address: '0xcca95e580bbbd04851ebfb85f77fd46c9b91f11c' }
-  vesting: { 
+  vesting: {
     name: 'MANA Locked-in on Vesting Contracts', 
     address: [
+      '0xeea573cd5af454ed857c937df52f4fc395d17ee2',
+      '0x245ec3adda574b2df904af8172a629f4a7e8175b',
+      '0x3e05dc08b74100e5a1fee8039d7b056df74b9ffa',
+      '0x634989a6936ec390976aa609a59719b27e739b5a',
+      '0xd40f789e9ddc16870f54b0b00892d6e431615db0',
+      '0x92f08439a2be1feea57af7b79c12afb9b2b6fb12',
+      '0x0e0121bb16bd83d4a8fdc946c88469007a68407d',
+      '0x62b922dad5bfa84a62cbf1b1b6f649877e754c16',
+      '0x99a8c41f3e9a07222f71223fd09298fb8f0b30bd',
+      '0x91affbcc5631874ecefe9db0b0a64154617df9b8',
+      '0x99a8c41f3e9a07222f71223fd09298fb8f0b30bd',
+      '0xedae9582222ad181fa9cb19060fac3e6c61eb84e',
+      '0xb23bf5ab5ba94e4e520a0b8e403534de07392217',
+      '0xab6746bb3953dd4aacd69eaef3e8411b4b334c2e',
+      '0x248599efb59161746a7393b0cf33cd713d0b7f4a',
       '0x977804cf00a31e4af48ddff1afc4d06a805f73c6',
-      '0x07e2742e25bd2608e8f6ddcf981c779765b4a3fc', 
+      '0x07e2742e25bd2608e8f6ddcf981c779765b4a3fc',
       '0x3556407223f3e06b70fcebc6cbd554761c790fda',
       '0x4be66bbd0da5c247f9b1d4e493a2405ef9951045',
       '0x4decf476893cd636aa9abb5f864fac22c6af3ab2',
