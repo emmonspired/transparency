@@ -7,12 +7,9 @@ const https = require('https')
 const AWS = require('aws-sdk')
 
 const nunjucks = require('nunjucks')
-const minify = require('html-minifier').minify;
+const minify = require('html-minifier').minify
 
-
-const config = yaml.safeLoad(
-  fs.readFileSync('config.yml', 'utf8')
-)
+const config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'))
 
 const tokenContract = config.contracts.token
 const terraformContract = config.contracts.terraform
@@ -22,20 +19,18 @@ let web3 = null
 
 try {
   web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-  
 } catch (err) {
   console.log('****************WARNING********************')
   console.log('This script needs web3 ^1.0.0')
-  
+
   throw err
 }
 
-function sortDictionary (dict) {
-
-  var items = Object.keys(dict).map((key) => {
+function sortDictionary(dict) {
+  var items = Object.keys(dict).map(key => {
     return [key, dict[key]]
   })
-  
+
   items.sort((first, second) => {
     return second[1] - first[1]
   })
@@ -43,34 +38,34 @@ function sortDictionary (dict) {
   return items
 }
 
-function getContractAbi (addr) {
+function getContractAbi(addr) {
   return new Promise((resolve, reject) => {
-    const url = 'https://api.etherscan.io/api?module=contract&action=getabi&address=' + addr
+    const url =
+      'https://api.etherscan.io/api?module=contract&action=getabi&address=' +
+      addr
 
-    var request = https.get(url, (response) => {
+    var request = https.get(url, response => {
       // Buffer the body entirely for processing as a whole.
       var bodyChunks = []
 
-      response.on('data', (chunk) => {
+      response.on('data', chunk => {
         bodyChunks.push(chunk)
       })
 
       response.on('end', () => {
-        const ret = JSON.parse(
-          Buffer.concat(bodyChunks)
-        )
+        const ret = JSON.parse(Buffer.concat(bodyChunks))
         resolve(ret)
       })
     })
 
-    request.on('error', (e) => {
+    request.on('error', e => {
       console.log('ERROR: ' + e.message)
       reject(e)
     })
   })
 }
 
-function uploadS3 (filename, data) {
+function uploadS3(filename, data) {
   console.log('\nUploading to S3...')
 
   AWS.config.update({
@@ -81,54 +76,60 @@ function uploadS3 (filename, data) {
 
   var s3 = new AWS.S3()
 
-  s3.putObject({
-    'ACL': 'public-read',
-    'Bucket': config.s3.bucketName,
-    'Key': filename,
-    'Body': Buffer.from(data, 'binary') // A base64 encoded body
-  }, (err, resp) => {
-    if (err) {
-      console.log(err)
+  s3.putObject(
+    {
+      ACL: 'public-read',
+      Bucket: config.s3.bucketName,
+      Key: filename,
+      Body: Buffer.from(data, 'binary'), // A base64 encoded body
+      ContentType: 'text/html'
+    },
+    (err, resp) => {
+      if (err) {
+        console.log(err)
+      }
+      console.log('Done.')
     }
-    console.log('Done.')
-  })
+  )
 }
 
 async function eventCrawler(args) {
-  
-  let obj = { 
-    maxBlock: 0, addressMap: {}
+  let obj = {
+    maxBlock: 0,
+    addressMap: {}
   }
-  
+
   try {
     obj = require('./data/' + args.filename)
-  
   } catch (err) {
     console.warn(args.filename, 'not found')
   }
 
-  let events = await args.contractInstance.getPastEvents(args.eventName, { 
-    fromBlock: obj.maxBlock, 
-    toBlock: 'latest' 
+  let events = await args.contractInstance.getPastEvents(args.eventName, {
+    fromBlock: obj.maxBlock,
+    toBlock: 'latest'
   })
-  
+
   let eventCount = 0
-  
-  for (let event of events) { 
-    process.stdout.write(`Processing ${args.eventName} - ${++eventCount}/${events.length}`)
+
+  for (let event of events) {
+    process.stdout.write(
+      `Processing ${args.eventName} - ${++eventCount}/${events.length}`
+    )
     process.stdout.write('\u001b[0K\r')
 
     const { removed, blockNumber, transactionHash, returnValues } = event
-    
+
     if (removed) continue
 
-    for (let peer of args.eventValues) {            
+    for (let peer of args.eventValues) {
       if (returnValues[peer] && !(returnValues[peer] in obj.addressMap)) {
-        
-        let mana = await args.contractInstance.methods[args.methodCall](returnValues[peer]).call()
+        let mana = await args.contractInstance.methods
+          [args.methodCall](returnValues[peer])
+          .call()
         let balance = web3.utils.fromWei(mana, 'ether')
 
-        obj.addressMap[ returnValues[peer] ] = parseFloat(balance)
+        obj.addressMap[returnValues[peer]] = parseFloat(balance)
       }
     }
 
@@ -136,29 +137,28 @@ async function eventCrawler(args) {
       obj.maxBlock = blockNumber
     }
   }
-  
+
   //
-  fs.writeFile('./data/' + args.filename, JSON.stringify(obj), 'utf8', function(err) {
-    if (err) 
-      throw err;
-    
-    console.log('\r\n', args.filename, 'saved');
+  fs.writeFile('./data/' + args.filename, JSON.stringify(obj), 'utf8', function(
+    err
+  ) {
+    if (err) throw err
+
+    console.log('\r\n', args.filename, 'saved')
   })
 
   return obj
 }
 
 async function run() {
-  
   // Total Supply
   let mana = await tokenContract.instance.methods.totalSupply().call()
   let balance = web3.utils.fromWei(mana, 'ether')
-  
+
   tokenContract.manaHolding = parseFloat(balance)
 
   // Locked in other contracts
   for (let x of ['wallets', 'terraform', 'vesting']) {
-    
     let holder = config.contracts[x]
 
     if (typeof holder.address !== 'string') {
@@ -167,25 +167,25 @@ async function run() {
       for (let addr of holder.address) {
         let mana = await tokenContract.instance.methods.balanceOf(addr).call()
         let balance = web3.utils.fromWei(mana, 'ether')
-        
+
         holder.manaHolding += parseFloat(balance)
       }
-
     } else {
-      let mana = await tokenContract.instance.methods.balanceOf(holder.address).call()
+      let mana = await tokenContract.instance.methods
+        .balanceOf(holder.address)
+        .call()
       let balance = web3.utils.fromWei(mana, 'ether')
 
       holder.manaHolding = parseFloat(balance)
     }
-
   }
 
   // Vesting Participants
 
   console.log('Processing vesting addresses...')
-  
+
   let vestingHolders = {}
-  
+
   for (let addr of config.contracts.vesting.address) {
     let mana = await tokenContract.instance.methods.balanceOf(addr).call()
     let balance = web3.utils.fromWei(mana, 'ether')
@@ -193,12 +193,12 @@ async function run() {
     vestingHolders[addr] = parseFloat(balance)
   }
 
-  // Transfers and Terraform. 
+  // Transfers and Terraform.
 
   console.log('Processing transfers and terraform addresses...')
 
   Promise.all([
-    eventCrawler({ 
+    eventCrawler({
       contractInstance: tokenContract.instance,
       eventName: 'Transfer',
       eventValues: ['from', 'to'],
@@ -211,17 +211,16 @@ async function run() {
       eventValues: ['user'],
       methodCall: 'lockedBalance',
       filename: 'terraformLocked.json'
-    })      
-  ]).then((results) => {
-    
+    })
+  ]).then(results => {
     // console.log(results)
 
     let manaHolders = results[0]
     let terraformHolders = results[1]
 
-    // Render file. 
+    // Render file.
 
-    const html = nunjucks.render('views/dashboard.njk', { 
+    const html = nunjucks.render('views/dashboard.njk', {
       title: config.title,
       tokenUnit: config.tokenUnit,
       contracts: config.contracts,
@@ -230,7 +229,7 @@ async function run() {
       terraformHolders: sortDictionary(terraformHolders.addressMap).slice(0, 5)
     })
 
-    const minifiedHtml = minify(html, { 
+    const minifiedHtml = minify(html, {
       removeComments: true,
       collapseWhitespace: true,
       collapseBooleanAttributes: true,
@@ -241,22 +240,26 @@ async function run() {
     })
 
     fs.writeFile('dashboard.html', minifiedHtml, 'utf8', function(err) {
-      if (err) 
-        throw err;
+      if (err) throw err
     })
 
     uploadS3('index.html', minifiedHtml)
   })
-
 }
 
-Promise.all([ 
-  getContractAbi(tokenContract.address), 
+Promise.all([
+  getContractAbi(tokenContract.address),
   getContractAbi(terraformContract.address)
 ])
-.then((results) => {
-  tokenContract.instance = new web3.eth.Contract(JSON.parse(results[0].result), tokenContract.address)
-  terraformContract.instance = new web3.eth.Contract(JSON.parse(results[1].result), terraformContract.address)
-})
-.then(run)
-.catch(console.error)
+  .then(results => {
+    tokenContract.instance = new web3.eth.Contract(
+      JSON.parse(results[0].result),
+      tokenContract.address
+    )
+    terraformContract.instance = new web3.eth.Contract(
+      JSON.parse(results[1].result),
+      terraformContract.address
+    )
+  })
+  .then(run)
+  .catch(console.error)
