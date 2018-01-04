@@ -17,12 +17,11 @@ const terraformContract = config.contracts.terraform
 const Web3 = require('web3')
 let web3 = null
 
+// Use Infura. Consider using a local node (http://localhost:8545) for better performance
+const provider = process.env.WEB3_PROVIDER || 'https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'
+
 try {
-  web3 = new Web3(
-    new Web3.providers.HttpProvider(
-      'https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'
-    )
-  )
+  web3 = new Web3(new Web3.providers.HttpProvider(provider))
 } catch (err) {
   console.log('****************WARNING********************')
   console.log('This script needs web3 ^1.0.0')
@@ -85,8 +84,8 @@ function uploadS3(filename, data) {
       ACL: 'public-read',
       Bucket: config.s3.bucketName,
       Key: filename,
-      ContentType: 'text/html',
-      Body: Buffer.from(data, 'binary') // A base64 encoded body
+      Body: Buffer.from(data, 'binary'), // A base64 encoded body
+      ContentType: 'text/html'
     },
     (err, resp) => {
       if (err) {
