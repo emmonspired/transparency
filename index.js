@@ -18,8 +18,8 @@ const Web3 = require('web3')
 let web3 = null
 
 try {
-  // web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-  web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'))
+  web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+  //web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'))
 } catch (err) {
   console.log('****************WARNING********************')
   console.log('This script needs web3 ^1.0.0')
