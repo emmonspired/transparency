@@ -246,7 +246,16 @@ async function run() {
       if (err) throw err
     })
 
-    uploadS3('index.html', minifiedHtml)
+    // render API
+    const endpointJson = nunjucks.render('views/endpoint.njk', {
+      contracts: config.contracts
+    })
+    const minifiedJson = minify(endpointJson, { 
+      collapseWhitespace: true
+    })
+
+   uploadS3('index.html', minifiedHtml)
+   uploadS3('supply.json', minifiedJson, contentType='application/json')
   })
 }
 

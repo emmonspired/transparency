@@ -24,12 +24,31 @@
         border-top: 1px solid #4f4f4f;
         border-bottom: 1px solid #4f4f4f;
       }
-      .summary li { margin: 10px 0; }
-      .summary .title,
-      .summary .value { font-size: 1.3em; font-weight: bold; }
-      .holders .title,
-      .holders .value { font-size: 1em; }
-      .holders .title { text-transform: lowercase; font-size: 80%; color: lightgrey; }
+      .stat .title { color: #3e396b; }
+      .summary .stat { margin: 20px; font-weight: bold; flex-direction: column; }
+      .summary .title { font-size: 1em; }
+      .summary .value { font-size: 1.4em; font-weight: bold; margin-top: 5px; }
+      .summary .col-sm { border-left: solid 0.5px #ececec; }
+      .summary .col-sm:first-child { border-left: none; }
+      .holders .title { 
+        font-size: 1.15em; 
+        text-transform: lowercase; 
+        flex: 2; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .holders .title a { border-bottom: 1px dashed; padding-bottom: 2px; }
+      .holders .value { font-size: 1.2em; font-weight: bold; flex: 1; }
+      .holders .stat:nth-child(odd) { background: #fff }
+      .holders .stat:first-child .title, 
+      .holders .stat:first-child .value { font-size: 1em; color: #626262; text-transform: uppercase!important; font-weight: normal; }
+      .holders .stat {
+        background-color: #fbfbfb;
+        padding: 15px;
+      }
+      .holders a:hover { text-decoration: none; transition: color 0.5s; color: #3e396b; }
+      .header { color: #232323; font-weight: bold; font-size: 1.1em; }
       .header-icon {
         display: inline-block;
         vertical-align: text-top;
@@ -83,12 +102,18 @@
               {{ printStat(contracts.vesting) }}
               {{ printStat(contracts.wallets) }}
 
-              {% set total = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding %}
-              {{ printStat({ 'name': 'Circulating Supply', 'manaHolding': total, 'help': 'Including Decentraland\'s wallet' }) }}
+          <div class="col-md-6 col-lg-4">
+            {{ printStat(contracts.token) }}
+            
+            {{ printStat(contracts.vesting) }}
+            
+            {% set totalSupply = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding - contracts.wallets.manaHolding %}
+            {{ printStat({ 'name': 'Circulating Supply', 'manaHolding': totalSupply, 'help': 'Excluding Decentraland\'s wallet' }) }}
+          </div>
 
-              {% set total = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding - contracts.wallets.manaHolding %}
-              {{ printStat({ 'name': 'Circulating Supply', 'manaHolding': total, 'help': 'Excluding Decentraland\'s wallet' }) }}
-            </ul>
+          <div class="col-md-6 col-lg-4">
+            {% set burnedMana = (originalSupply - contracts.token.manaHolding) %}
+            {{ printStat({ 'name': 'Burned MANA', 'manaHolding': burnedMana }) }}
 
             <div class="text-center" style="width:50%">
               <canvas id="chart"></canvas>
@@ -177,10 +202,10 @@
           colors.red, colors.orange, colors.yellow, colors.green,
         ],
         data: [
-          {{ total }},
-          {{ contracts.terraform.manaHolding }},
-          {{ contracts.vesting.manaHolding }},
-          {{ contracts.wallets.manaHolding }}
+          {{ totalSupply | round(0) }},
+          {{ burnedMana | round(0) }},
+          {{ contracts.vesting.manaHolding | round(0) }},
+          {{ contracts.wallets.manaHolding | round(0) }}
         ]
       }],
       labels: [
