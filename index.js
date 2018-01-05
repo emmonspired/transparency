@@ -248,8 +248,8 @@ async function run() {
       collapseWhitespace: true
     })
 
-    uploadS3('index.html', minifiedHtml)
-    uploadS3('supply.json', minifiedJson, contentType='application/json')
+   uploadS3('index.html', minifiedHtml)
+   uploadS3('supply.json', minifiedJson, contentType='application/json')
   })
 }
 

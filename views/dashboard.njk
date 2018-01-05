@@ -48,6 +48,7 @@
         background-color: #fbfbfb;
         padding: 15px;
       }
+      .holders a:hover { text-decoration: none; transition: color 0.5s; color: #3e396b; }
       .header { color: #232323; font-weight: bold; font-size: 1.1em; }
       .header-icon {
         display: inline-block;
@@ -100,7 +101,7 @@
           </div>
 
           <div class="col-md-6 col-lg-4">
-            {{ printStat({ 'name': 'Total MANA Supply', 'manaHolding': originalSupply }) }}
+            {{ printStat(contracts.token) }}
             
             {{ printStat(contracts.vesting) }}
             
@@ -109,7 +110,7 @@
           </div>
 
           <div class="col-md-6 col-lg-4">
-            {% set burnedMana = (originalSupply - contracts.token.manaHolding) or 161483050 %}
+            {% set burnedMana = (originalSupply - contracts.token.manaHolding) %}
             {{ printStat({ 'name': 'Burned MANA', 'manaHolding': burnedMana }) }}
 
             {{ printStat(contracts.wallets) }}
@@ -214,10 +215,10 @@
           colors.green, colors.yellow, colors.purple, colors.red,
         ],
         data: [
-          {{ totalSupply | int }},
-          {{ burnedMana | int }},
-          {{ contracts.vesting.manaHolding | int }},
-          {{ contracts.wallets.manaHolding | int }}
+          {{ totalSupply | round(0) }},
+          {{ burnedMana | round(0) }},
+          {{ contracts.vesting.manaHolding | round(0) }},
+          {{ contracts.wallets.manaHolding | round(0) }}
         ]
       }],
       labels: [
