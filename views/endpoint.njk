@@ -1,0 +1,6 @@
+{% set circulating_supply = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding - contracts.wallets.manaHolding %}
+{% set total_supply = contracts.token.manaHolding %}
+{% set vesting = contracts.vesting.manaHolding %}
+{% set wallets = contracts.wallets.manaHolding %}
+
+{ "circulating": {{ circulating_supply }}, "total": {{ total_supply }}, "decentraland": {{ wallets }}, "vesting": {{ vesting }}, "token_holders": {{ manaHolders }} }
