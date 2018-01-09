@@ -242,7 +242,8 @@ async function run() {
 
     // render API
     const endpointJson = nunjucks.render('views/endpoint.njk', {
-      contracts: config.contracts
+      contracts: config.contracts, 
+      manaHolders: Object.keys(manaHolders).length
     })
     const minifiedJson = minify(endpointJson, { 
       collapseWhitespace: true
