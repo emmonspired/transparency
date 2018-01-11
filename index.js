@@ -97,9 +97,11 @@ function uploadS3(filename, data) {
 }
 
 async function eventCrawler(args) {
+  
   let obj = {
     maxBlock: 0,
-    addressMap: {}
+    addressMap: {},
+    transfersVolume: {}
   }
 
   try {
@@ -124,6 +126,18 @@ async function eventCrawler(args) {
     const { removed, blockNumber, transactionHash, returnValues } = event
 
     if (removed) continue
+
+    // Get dates from transfer Event 
+    if (args.eventName === 'Transfer') {
+      let blockData = await web3.eth.getBlock(blockNumber)
+      let date = new Date(1000 * blockData.timestamp)    
+     
+      if (obj.transfersVolume[date.toDateString()] !== undefined) {
+        obj.transfersVolume[date.toDateString()] += returnValues['value']
+      } else {
+        obj.transfersVolume[date.toDateString()] = 0
+      }
+    }
 
     for (let peer of args.eventValues) {
       if (returnValues[peer] && !(returnValues[peer] in obj.addressMap)) {
@@ -249,7 +263,10 @@ async function run() {
     // render API
     const endpointJson = nunjucks.render('views/endpoint.njk', {
       contracts: config.contracts, 
-      manaHolders: Object.keys(manaHolders.addressMap).filter((key)=>{ return manaHolders.addressMap[key] > 0 ? manaHolders.addressMap : null }).length
+      manaTransfers: manaHolders.transfersVolume[(new Date()).toDateString()],
+      manaHolders: Object.keys(manaHolders.addressMap).filter((key) => { 
+        return manaHolders.addressMap[key] > 0 ? manaHolders.addressMap : null 
+      }).length
     })
     const minifiedJson = minify(endpointJson, { 
       collapseWhitespace: true
