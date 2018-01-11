@@ -125,7 +125,6 @@ async function eventCrawler(args) {
 
     // Get dates from transfer Event 
     if (args.eventName === 'Transfer') {
-      console.log('Getting info for ', blockNumber)
       let blockData = await web3.eth.getBlock(blockNumber)
       let date = new Date(1000 * blockData.timestamp)    
      
@@ -267,8 +266,8 @@ async function run() {
       collapseWhitespace: true
     })
 
-   // uploadS3('index.html', minifiedHtml)
-   // uploadS3('supply.json', minifiedJson, contentType='application/json')
+   uploadS3('index.html', minifiedHtml)
+   uploadS3('supply.json', minifiedJson, contentType='application/json')
   })
 }
 
