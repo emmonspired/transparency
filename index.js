@@ -129,7 +129,7 @@ async function eventCrawler(args) {
       let date = new Date(1000 * blockData.timestamp)    
      
       if (obj.transfersVolume[date.toDateString()] !== undefined) {
-        obj.transfersVolume[date.toDateString()] += returnValues['value']
+        obj.transfersVolume[date.toDateString()] += parseFloat(returnValues['value'])
       } else {
         obj.transfersVolume[date.toDateString()] = 0
       }
