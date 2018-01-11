@@ -125,7 +125,8 @@ async function eventCrawler(args) {
 
     // Get dates from transfer Event 
     if (args.eventName === 'Transfer') {
-      let blockData = web3.eth.getBlock(blockNumber)
+      console.log('Getting info for ', blockNumber)
+      let blockData = await web3.eth.getBlock(blockNumber)
       let date = new Date(1000 * blockData.timestamp)    
      
       if (obj.transfersVolume[date.toDateString()] !== undefined) {
