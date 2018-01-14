@@ -59,6 +59,8 @@ contracts:
     ]
   }
 
+ethnode: ''
+
 s3:
   accessKey: ''
   secretAccessKey: ''

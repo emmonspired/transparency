@@ -18,7 +18,7 @@ const Web3 = require('web3')
 let web3 = null
 
 // Use Infura. Consider using a local node (http://localhost:8545) for better performance
-const provider = process.env.WEB3_PROVIDER || 'https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'
+const provider = config.ethnode || 'https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'
 
 try {
   web3 = new Web3(new Web3.providers.HttpProvider(provider))
