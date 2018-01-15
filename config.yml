@@ -60,7 +60,9 @@ contracts:
     ]
   }
 
+ethnode: ''
+
 s3:
-  accessKey: 'AKIAJ7LHDVKP23DA6YVQ'
-  secretAccessKey: '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'
-  bucketName: 'transparency.decentraland.online'
+  accessKey: ''
+  secretAccessKey: ''
+  bucketName: 'transparency.decentraland.org'

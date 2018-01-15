@@ -17,9 +17,11 @@ const terraformContract = config.contracts.terraform
 const Web3 = require('web3')
 let web3 = null
 
+// Use Infura. Consider using a local node (http://localhost:8545) for better performance
+const provider = config.ethnode || 'https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'
+
 try {
-  web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
-  //web3 = new Web3(new Web3.providers.HttpProvider('https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'))
+  web3 = new Web3(new Web3.providers.HttpProvider(provider))
 } catch (err) {
   console.log('****************WARNING********************')
   console.log('This script needs web3 ^1.0.0')
@@ -151,7 +153,6 @@ async function eventCrawler(args) {
     }
   }
 
-  //
   fs.writeFile('./data/' + args.filename, JSON.stringify(obj), 'utf8', (err) => {
     if (err) { throw err }
     console.log('\r\n', args.filename, 'saved')
