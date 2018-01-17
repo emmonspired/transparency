@@ -71,7 +71,7 @@ function uploadS3(filename, data, contentType='text/html') {
   AWS.config.update({
     region: 'us-east-1',
     accessKeyId: process.env.S3_ACCESS_KEY,
-    secretAccessKey: process.env.S3_ACCESS_KEY
+    secretAccessKey: process.env.S3_SECRET_KEY
   })
 
   var s3 = new AWS.S3()
