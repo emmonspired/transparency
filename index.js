@@ -256,7 +256,7 @@ async function run() {
     // render API
     const endpointJson = nunjucks.render('views/endpoint.njk', {
       contracts: config.contracts, 
-      manaTransfers: Object.values(manaHolders.addressMap).reduce((a, b) => a + b),
+      manaTransfers: Object.values(manaHolders.transfersVolume).reduce((a, b) => a + b),
       manaHolders: Object.keys(manaHolders.addressMap).filter((key) => { 
         return manaHolders.addressMap[key] > 0 ? manaHolders.addressMap : null 
       }).length
