@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require('dotenv').config()
 
 const fs = require('fs')
 const yaml = require('js-yaml')
@@ -8,20 +9,17 @@ const AWS = require('aws-sdk')
 
 const nunjucks = require('nunjucks')
 const minify = require('html-minifier').minify
-
 const config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'))
 
 const tokenContract = config.contracts.token
 const terraformContract = config.contracts.terraform
 
 const Web3 = require('web3')
+
 let web3 = null
 
-// Use Infura. Consider using a local node (http://localhost:8545) for better performance
-const provider = config.ethnode || 'https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr'
-
 try {
-  web3 = new Web3(new Web3.providers.HttpProvider(provider))
+  web3 = new Web3(new Web3.providers.HttpProvider(config.ethnode))
 } catch (err) {
   console.log('****************WARNING********************')
   console.log('This script needs web3 ^1.0.0')
@@ -72,8 +70,8 @@ function uploadS3(filename, data, contentType='text/html') {
 
   AWS.config.update({
     region: 'us-east-1',
-    accessKeyId: config.s3.accessKey,
-    secretAccessKey: config.s3.secretAccessKey
+    accessKeyId: process.env.S3_ACCESS_KEY,
+    secretAccessKey: process.env.S3_ACCESS_KEY
   })
 
   var s3 = new AWS.S3()
@@ -81,7 +79,7 @@ function uploadS3(filename, data, contentType='text/html') {
   s3.putObject(
     {
       ACL: 'public-read',
-      Bucket: config.s3.bucketName,
+      Bucket: config.s3bucketName,
       Key: filename,
       Body: Buffer.from(data, 'binary'), // A base64 encoded body
       ContentType: contentType
@@ -258,7 +256,7 @@ async function run() {
     // render API
     const endpointJson = nunjucks.render('views/endpoint.njk', {
       contracts: config.contracts, 
-      manaTransfers: manaHolders.transfersVolume[(new Date()).toDateString()],
+      manaTransfers: Object.values(manaHolders.addressMap).reduce((a, b) => a + b),
       manaHolders: Object.keys(manaHolders.addressMap).filter((key) => { 
         return manaHolders.addressMap[key] > 0 ? manaHolders.addressMap : null 
       }).length
@@ -267,8 +265,8 @@ async function run() {
       collapseWhitespace: true
     })
 
-   uploadS3('index.html', minifiedHtml)
-   uploadS3('supply.json', minifiedJson, contentType='application/json')
+    uploadS3('index.html', minifiedHtml)
+    uploadS3('supply.json', minifiedJson, contentType='application/json')
   })
 }
 

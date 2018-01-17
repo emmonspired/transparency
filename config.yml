@@ -3,11 +3,11 @@ title: 'Decentraland'
 tokenUnit: 'MANA'
 originalSupply: 2805886393.158302800966567885
 contracts: 
-  token: { name: 'Total MANA Supply', address: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942' }
-  wallets: { name: 'MANA in Decentraland Wallets', address: '0xe5d0c3fea1e5f01ca4098e9580b93b3b5d0ea768' }
-  terraform: { name: 'MANA Locked-in for Terraform', address: '0xcca95e580bbbd04851ebfb85f77fd46c9b91f11c' }
-  vesting: {
-    name: 'MANA Locked-in in Vesting Contracts', 
+  land: { address: '0x36fc2821c1dba31ed04682b2277c89f33fd885b7' }
+  token: { address: '0x0f5d2fb29fb7d3cfee444a200298f468908cc942' }
+  wallets: { address: '0xe5d0c3fea1e5f01ca4098e9580b93b3b5d0ea768' }
+  terraform: { address: '0xcca95e580bbbd04851ebfb85f77fd46c9b91f11c' }
+  vesting: { 
     address: [
       '0xeea573cd5af454ed857c937df52f4fc395d17ee2',
       '0x245ec3adda574b2df904af8172a629f4a7e8175b',
@@ -60,9 +60,5 @@ contracts:
     ]
   }
 
-ethnode: ''
-
-s3:
-  accessKey: ''
-  secretAccessKey: ''
-  bucketName: 'transparency.decentraland.org'
+ethnode: 'https://mainnet.infura.io/JizKz5pSFRVfr23Mebcr' #'http://localhost:8545'
+s3bucketName: 'transparency.decentraland.online'

@@ -1,8 +1,8 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <title>{{ title }} MANA Token Information</title>
-    <meta name="description" content="{{ title }}">
+    <title>MANA Token Information - {{ title }}</title>
+    <meta name="description" content="MANA Token supply and holders information">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet">
@@ -13,7 +13,6 @@
     <script defer src="https://use.fontawesome.com/releases/v5.0.1/js/all.js"></script>
   </head>
   <body itemscope itemtype="http://schema.org/WebPage">
-
     <style>
       body {
         background: #fff;
@@ -101,21 +100,17 @@
           </div>
 
           <div class="col-md-6 col-lg-4">
-            {{ printStat(contracts.token) }}
-            
-            {{ printStat(contracts.vesting) }}
-            
             {% set totalSupply = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding - contracts.wallets.manaHolding %}
+            {{ printStat({ 'name': 'Total MANA Supply', 'manaHolding': contracts.token.manaHolding }) }}
+            {{ printStat({ 'name': 'MANA Locked-in in Vesting Contracts', 'manaHolding': contracts.vesting.manaHolding }) }}
             {{ printStat({ 'name': 'Circulating Supply', 'manaHolding': totalSupply, 'help': 'Excluding Decentraland\'s wallet' }) }}
           </div>
 
           <div class="col-md-6 col-lg-4">
             {% set burnedMana = (originalSupply - contracts.token.manaHolding) %}
-            {{ printStat({ 'name': 'Burned MANA', 'manaHolding': burnedMana }) }}
-
-            {{ printStat(contracts.wallets) }}
-
             {% set totalSupplyB = contracts.token.manaHolding - contracts.terraform.manaHolding - contracts.vesting.manaHolding %}
+            {{ printStat({ 'name': 'Burned MANA', 'manaHolding': burnedMana }) }}
+            {{ printStat({ 'name': 'MANA in Decentraland Wallets', 'manaHolding': contracts.wallets.manaHolding }) }}
             {{ printStat({ 'name': 'Circulating Supply', 'manaHolding': totalSupplyB, 'help': 'Including Decentraland\'s wallet' }) }}
           </div>
 
@@ -224,8 +219,8 @@
       labels: [
         'MANA in the open market',
         'MANA Burned',
-        '{{ contracts.vesting.name }}',
-        '{{ contracts.wallets.name }}'
+        'MANA Locked-in in Vesting Contracts',
+        'MANA in Decentraland Wallets'
       ]
     };
     var ctx = document.getElementById("chart").getContext('2d');
