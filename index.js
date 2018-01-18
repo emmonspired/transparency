@@ -11,6 +11,7 @@ const nunjucks = require('nunjucks')
 const minify = require('html-minifier').minify
 const config = yaml.safeLoad(fs.readFileSync('config.yml', 'utf8'))
 
+const landContract = config.contracts.land
 const tokenContract = config.contracts.token
 const terraformContract = config.contracts.terraform
 
@@ -223,7 +224,7 @@ async function run() {
     }),
     eventCrawler({
       contractInstance: landContract.instance,
-      eventName: 'Create',
+      eventName: 'Transfer',
       eventValues: ['from', 'to'],
       methodCall: 'landOf',
       filename: 'landTransfers.json'      
@@ -278,6 +279,7 @@ async function run() {
 }
 
 Promise.all([
+  getContractAbi(landContract.address),
   getContractAbi(tokenContract.address),
   getContractAbi(terraformContract.address)
 ])
@@ -289,6 +291,10 @@ Promise.all([
     terraformContract.instance = new web3.eth.Contract(
       JSON.parse(results[1].result),
       terraformContract.address
+    )
+    landContract.instance = new web3.eth.Contract(
+      JSON.parse(results[1].result),
+      landContract.address
     )
   })
   .then(run)
