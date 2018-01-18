@@ -220,6 +220,13 @@ async function run() {
       eventValues: ['user'],
       methodCall: 'lockedBalance',
       filename: 'terraformLocked.json'
+    }),
+    eventCrawler({
+      contractInstance: landContract.instance,
+      eventName: 'Create',
+      eventValues: ['from', 'to'],
+      methodCall: 'landOf',
+      filename: 'landTransfers.json'      
     })
   ]).then(results => {
     // console.log(results)
