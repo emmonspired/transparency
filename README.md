@@ -2,7 +2,7 @@
 
 # Transparency
 
-[Decentraland](https://decentraland.org)'s Transparency Dashboard
+[Decentraland](https://decentraland.org)'s [Transparency Dashboard](https://transparency.decentraland.org)
 
 To help our community better understand the MANA token, our transparency dashboard includes a summary of the most important stats, such as total supply, circulating supply, and how these may be affected by the aforementioned (and all future) MANA burn, as well as by vesting contracts.
 
