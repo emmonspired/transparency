@@ -70,10 +70,10 @@
       .footer-icons a:hover { text-decoration: none; }
     </style>
 
-    {% macro printStat(stat, printUnit=false) %}
+    {% macro printStat(stat, printUnit=false, isVesting=false) %}
     <div class="stat d-sm-flex">
       <div class="title">
-        {% if stat.name %}{{ stat.name }}{% elif stat.addr %}<a href="https://etherscan.io/address/{{ stat.addr }}">{{ stat.addr }}</a>{% endif %}
+        {% if stat.name %}{{ stat.name }}{% elif stat.addr and not isVesting %}<a href="https://etherscan.io/address/{{ stat.addr }}">{{ stat.addr }}</a>{% else %}<a href="https://vesting.decentraland.org/#/{{ stat.addr }}">{{ stat.addr }}</a>{% endif %}
       </div>
       {% if stat.help %}<div class="small text-help">{{ stat.help }}</div>{% endif %}
       <div class="value">
@@ -149,7 +149,7 @@
             <div class="value">Amount</div>
           </div>
           {% for x in vestingHolders %}
-            {{ printStat({ addr: x[0], manaHolding: x[1] }, true) }}
+            {{ printStat({ addr: x[0], manaHolding: x[1] }, true, true) }}
           {% endfor %}
         </div>
       
